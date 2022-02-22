@@ -416,123 +416,125 @@ class TodoListApi {
   }
 }
 
-/**
- * Instanz der Api -> mit diesem alle Funktionen aufrufen!
- *
- *  z.B. _api.getList('shopping')
- */
-const _api = new TodoListApi();
+function Test() {
+  /**
+   * Instanz der Api -> mit diesem alle Funktionen aufrufen!
+   *
+   *  z.B. _api.getList('shopping')
+   */
+  const _api = new TodoListApi();
 
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// #############################
-// ################## TESTS
+  // #############################
+  // ################## TESTS
 
-/**
- * test funktion, um Todo hinzuzufuegen
- */
-function testAddRandomTodo() {
-  const todo = _api.createTodo(
-    'shopping',
-    'Produkt ' + Math.floor(Math.random() * 1000)
-  );
-  console.table(todo);
-  _api.addTodo(todo);
-}
+  /**
+   * test funktion, um Todo hinzuzufuegen
+   */
+  function testAddRandomTodo() {
+    const todo = _api.createTodo(
+      'shopping',
+      'Produkt ' + Math.floor(Math.random() * 1000)
+    );
+    console.table(todo);
+    _api.addTodo(todo);
+  }
 
-function testGetTodoListFromStorage() {
-  console.table(_api.getTodoListFromStorage());
-}
+  function testGetTodoListFromStorage() {
+    console.table(_api.getTodoListFromStorage());
+  }
 
-// #############################
-// ################## Beispiel Implementierungen der TodoList-Api
+  // #############################
+  // ################## Beispiel Implementierungen der TodoList-Api
 
-/**
- * alle Listen holen und ausgeben
- */
-function testGetAllLists() {
-  _api.getAllLists().forEach((list) => {
-    console.log(`listName: ${list.listName}`);
-    console.log(`anzahl todos: ${list.count}`);
+  /**
+   * alle Listen holen und ausgeben
+   */
+  function testGetAllLists() {
+    _api.getAllLists().forEach((list) => {
+      console.log(`listName: ${list.listName}`);
+      console.log(`anzahl todos: ${list.count}`);
 
-    // your code: here for example build html-code to add to your nav-bar
-    // let navListElement = createNavListElement(list.listName, list.count)
-    // document.getElementById('navbar').appendChild(navListElement)
-  });
-}
+      // your code: here for example build html-code to add to your nav-bar
+      // let navListElement = createNavListElement(list.listName, list.count)
+      // document.getElementById('navbar').appendChild(navListElement)
+    });
+  }
 
-/**
- * alle Todo's einer Liste holen und ausgeben
- */
-function testGetListTodos() {
-  // Liste 'shopping' holen
-  const todos = _api.getList('shopping');
+  /**
+   * alle Todo's einer Liste holen und ausgeben
+   */
+  function testGetListTodos() {
+    // Liste 'shopping' holen
+    const todos = _api.getList('shopping');
 
-  // ueber todos iterieren
-  todos.forEach((todo) => {
-    console.log(`\n ---Todo >> id: ${todo.id}`);
-    console.log(`beschreibung: ${todo.description}`);
-    console.log(`erstellt am: ${todo.dateCreation.toLocaleString()}`);
+    // ueber todos iterieren
+    todos.forEach((todo) => {
+      console.log(`\n ---Todo >> id: ${todo.id}`);
+      console.log(`beschreibung: ${todo.description}`);
+      console.log(`erstellt am: ${todo.dateCreation.toLocaleString()}`);
 
-    // your code: here for example build html-code to add to your <main> section (o.ä.)
-    // let todoDivElement = createTodoDivElement(todo.id, todo.description, todo.dateCreation ...) // oder nur "todo" als parameter uebergeben
-    // document.getElementById('main').appendChild(todoDivElement)
-  });
-}
+      // your code: here for example build html-code to add to your <main> section (o.ä.)
+      // let todoDivElement = createTodoDivElement(todo.id, todo.description, todo.dateCreation ...) // oder nur "todo" als parameter uebergeben
+      // document.getElementById('main').appendChild(todoDivElement)
+    });
+  }
 
-/**
- * eine neue Liste hinzufügen
- */
-function testAddNewList() {
-  const todo = _api.addList('shopping');
+  /**
+   * eine neue Liste hinzufügen
+   */
+  function testAddNewList() {
+    const todo = _api.addList('shopping');
 
-  if (!todo) {
-    // error -> Listenname schon vergeben
-  } else {
-    console.log(`\n ---Todo >> id: ${todo.id}`);
-    console.log(`beschreibung: ${todo.description}`); // Pseudo-Eintrag -> 'Neuer Eintrag'
-    console.log(`erstellt am: ${todo.dateCreation.toLocaleString()}`);
+    if (!todo) {
+      // error -> Listenname schon vergeben
+    } else {
+      console.log(`\n ---Todo >> id: ${todo.id}`);
+      console.log(`beschreibung: ${todo.description}`); // Pseudo-Eintrag -> 'Neuer Eintrag'
+      console.log(`erstellt am: ${todo.dateCreation.toLocaleString()}`);
+    }
+  }
+
+  /**
+   * ein Todo mit 'id' holen
+   */
+  function testGetTodo() {
+    const todoId = 7;
+    // wird ueber id geholt
+    const todo = _api.getTodo(todoId);
+
+    if (!todo) {
+      // error -> nicht gefunden
+      console.error('Todo nicht gefunden!');
+    } else {
+      console.log(`\n ---Todo >> id: ${todo.id}`);
+      console.log(`beschreibung: ${todo.description}`);
+      console.log(`erstellt am: ${todo.dateCreation.toLocaleString()}`);
+      console.log(`erledigt?: ${todo.isCompleted}`);
+    }
+  }
+
+  /**
+   * ein neues Todo generieren
+   */
+  function testCreateTodo() {
+    const listName = 'shopping';
+    const description = 'Meine Todo-Beschreibung';
+
+    // let newTodo = createTodo(listName, description)
+
+    // oder aber auch mit zusätzlichen Parametern, z.B. Reihenfolge
+    const order = 3;
+    let newTodo = _api.createTodo(listName, description, order);
+
+    console.log(`\n ---Todo >> id: ${newTodo.id}`);
+    console.log(`beschreibung: ${newTodo.description}`);
+    console.log(`erstellt am: ${newTodo.dateCreation.toLocaleString()}`);
+
+    // zum Speichern in localStorge die 'addTodo'-Funktion aufrufen
+    _api.addTodo(newTodo);
   }
 }
 
-/**
- * ein Todo mit 'id' holen
- */
-function testGetTodo() {
-  const todoId = 7;
-  // wird ueber id geholt
-  const todo = _api.getTodo(todoId);
-
-  if (!todo) {
-    // error -> nicht gefunden
-    console.error('Todo nicht gefunden!');
-  } else {
-    console.log(`\n ---Todo >> id: ${todo.id}`);
-    console.log(`beschreibung: ${todo.description}`);
-    console.log(`erstellt am: ${todo.dateCreation.toLocaleString()}`);
-    console.log(`erledigt?: ${todo.isCompleted}`);
-  }
-}
-
-/**
- * ein neues Todo generieren
- */
-function testCreateTodo() {
-  const listName = 'shopping';
-  const description = 'Meine Todo-Beschreibung';
-
-  // let newTodo = createTodo(listName, description)
-
-  // oder aber auch mit zusätzlichen Parametern, z.B. Reihenfolge
-  const order = 3;
-  let newTodo = _api.createTodo(listName, description, order);
-
-  console.log(`\n ---Todo >> id: ${newTodo.id}`);
-  console.log(`beschreibung: ${newTodo.description}`);
-  console.log(`erstellt am: ${newTodo.dateCreation.toLocaleString()}`);
-
-  // zum Speichern in localStorge die 'addTodo'-Funktion aufrufen
-  _api.addTodo(newTodo);
-}
-
-export { Todo, TodoListApi };
+export { Todo, TodoListApi, Test };
