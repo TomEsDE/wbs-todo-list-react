@@ -73,8 +73,16 @@ class TodoListApi {
     if (this.globalTodoList.length === 0) {
       this.addTodo(this.createTodo('haushalt', 'Wäsche'));
       this.addTodo(this.createTodo('haushalt', 'Putzen'));
+      this.addTodo(this.createTodo('haushalt', 'Fegen'));
+      this.addTodo(this.createTodo('haushalt', 'Hausordnung'));
+      this.addTodo(this.createTodo('haushalt', 'Keller'));
+      this.addTodo(this.createTodo('haushalt', 'Speicher'));
       this.addTodo(this.createTodo('einkauf', 'Eier'));
       this.addTodo(this.createTodo('einkauf', 'Milch'));
+      this.addTodo(this.createTodo('einkauf', 'Mehl'));
+      this.addTodo(this.createTodo('einkauf', 'Zucker'));
+      this.addTodo(this.createTodo('einkauf', 'Nudeln'));
+      this.addTodo(this.createTodo('einkauf', 'Eis'));
       // -todo-list im Storage speichern
       this.saveToLocalStorage(this.globalTodoList);
     }
@@ -116,7 +124,7 @@ class TodoListApi {
    */
   saveToLocalStorage(todoList) {
     window.localStorage.setItem(this.localStorageKey, JSON.stringify(todoList));
-    console.table(todoList);
+    // console.table(todoList);
   }
 
   // ! Vorsicht! todolist aus LocalStorage entfernen
@@ -222,7 +230,7 @@ class TodoListApi {
    *
    * @param {*} id des Todo's
    */
-  completeTodo(id) {
+  checkTodo(id) {
     const todo = this.getTodo(id);
 
     if (!todo) {
@@ -230,6 +238,22 @@ class TodoListApi {
       console.error('Todo nicht gefunden!');
       return false;
     }
+
+    if (todo.isCompleted) {
+      // siehe Class Todo
+      this.uncompleteTodo(todo);
+    } else {
+      this.completeTodo(todo);
+    }
+  }
+
+  /**
+   * ein Todo 'erledigen'
+   *
+   * @param {*} id des Todo's
+   */
+  completeTodo(todo) {
+    // const todo = this.getTodo(id);
 
     // siehe Class Todo
     todo.completed();
@@ -239,20 +263,13 @@ class TodoListApi {
   }
 
   /**
-   * Todo kann Hauke oder Vita machen :)
    * ein 'erledigtes' Todo wieder zuruecksetzen
    *
    * @param {*} id des Todo's
    */
-  uncompleteTodo(id) {
+  uncompleteTodo(todo) {
     // todo tbf...
-    const todo = this.getTodo(id);
-
-    if (!todo) {
-      // error -> nicht gefunden
-      console.error('Todo nicht gefunden!');
-      return false;
-    }
+    // const todo = this.getTodo(id);
 
     // siehe Class Todo
     todo.uncompleted();
@@ -392,10 +409,10 @@ class TodoListApi {
 
     const getTodosOfList = (isCompleted) =>
       this.globalTodoList
-        .filter(
-          (todo) =>
-            todo.listName === listName && todo.isCompleted === isCompleted
-        )
+        .filter((todo) => {
+          todo.isFirstCompleted = false; // pseudo-value
+          return todo.listName === listName && todo.isCompleted === isCompleted;
+        })
         .sort((prev, curr) => {
           // nach 'order' sortieren, wenn gleiche 'order' -> dann nach dateCreation sortieren
           if (prev.order !== curr.order) {
@@ -408,9 +425,14 @@ class TodoListApi {
         });
 
     // erst unfertige Todo's, dann fertige
-    const todosOfList = getTodosOfList(false).concat(getTodosOfList(true));
+    let todosOfList = getTodosOfList(false);
+    const listCompleted = getTodosOfList(true);
+    if (listCompleted.length) listCompleted[0].isFirstCompleted = true; // pseudo-value zum Anzeigen der 'dotted line' über dem ersten 'completed todo'
 
-    console.table(todosOfList);
+    // listen zusammenfuegen
+    todosOfList = todosOfList.concat(listCompleted);
+
+    // console.table(todosOfList);
 
     return todosOfList;
   }

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Todo, TodoListApi } from '../js/localStorageApi';
 
-import NavList from './NavList';
+import NavListElement from './NavListElement';
+import TodoListElement from './TodoListElement';
 // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 // import {
 //   solid,
@@ -17,6 +18,7 @@ export default function Main() {
   const [lists, setLists] = useState([]);
   const [todos, setTodos] = useState([]);
   const [activeList, setActiveList] = useState('');
+  const [newTodo, setNewTodo] = useState('');
 
   // einmalig ausführen (ohne dependency) -> Api instanziieren
   useEffect(() => {
@@ -48,8 +50,32 @@ export default function Main() {
     }
   }, [activeList]);
 
+  function handleChangeTodo(event) {
+    console.log('handleChangeTodo', newTodo);
+    setNewTodo(event.target.value);
+  }
+
   function handleSubmit(event) {
-    console.log('handleSubmit');
+    event.preventDefault();
+    console.log('handleSubmit', newTodo);
+    api.addTodo(api.createTodo(activeList, newTodo));
+    setTodos(api?.getList(activeList));
+  }
+
+  function deleteTodo(todoId) {
+    console.log('deleteTodo', todoId);
+    api.removeTodo(todoId);
+    setTodos(api?.getList(activeList));
+  }
+
+  function renameTodo(todoId) {
+    console.log('renameTodo', todoId);
+  }
+
+  function checkTodo(todoId) {
+    console.log('checkTodo', todoId);
+    api.checkTodo(todoId);
+    setTodos(api?.getList(activeList));
   }
 
   function handleAddList(event) {
@@ -72,11 +98,10 @@ export default function Main() {
             <ul id="elementAddList">
               {lists.map((list) => {
                 return (
-                  <NavList
-                    listName={list.listName}
-                    count={list.count}
-                    isNew={list.isNew}
+                  <NavListElement
                     key={list.listName}
+                    list={list}
+                    isActive={activeList === list.listName}
                     setActive={setActiveList}
                   />
                 );
@@ -88,9 +113,11 @@ export default function Main() {
           <div id="addNewToDo">
             <form id="formNewTodo" action="#" onSubmit={handleSubmit}>
               <input
-                type="text"
-                name="description"
                 id="inputNewTodoText"
+                type="text"
+                name="newTodo"
+                value={newTodo}
+                onChange={handleChangeTodo}
                 placeholder="Add a Todo here... "
                 autoFocus
               />
@@ -100,18 +127,21 @@ export default function Main() {
             </form>
           </div>
           <div className="flexContainerToDo">
-            <ul id="listElement">
-              {todos.map((todo) => {
+            <div id="listElement">
+              {todos.map((todo, index) => {
                 return (
-                  <li className="listToDo" key={todo.id}>
-                    {todo.description} - {todo.dateCreation.toLocaleString()}
-                  </li>
+                  <TodoListElement
+                    key={todo.id}
+                    todo={todo}
+                    delay={(index + 1) * 50}
+                    deleteTodo={deleteTodo}
+                    renameTodo={renameTodo}
+                    checkTodo={checkTodo}
+                  />
                 );
               })}
-
-              <li className="listToDo"></li>
-              <li>Some text...</li>
-            </ul>
+              {/* <li className="listToDo"></li> */}
+            </div>
           </div>
         </div>
       </div>
