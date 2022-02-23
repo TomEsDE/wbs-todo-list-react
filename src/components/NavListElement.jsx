@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { FaEdit } from 'react-icons/fa';
 
 export default function NavListElement({
   list,
@@ -69,7 +70,8 @@ export default function NavListElement({
           )}
         </button>
         <button onClick={handleButtonRenameList}>
-          <i className="fa fa-edit" aria-hidden="true"></i>
+          {/* <i className="fa fa-edit" aria-hidden="true"></i> */}
+          <FaEdit />
         </button>
       </li>
     </>

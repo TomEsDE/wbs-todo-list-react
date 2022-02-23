@@ -10,15 +10,20 @@ export default function TodoListElement({
 }) {
   // console.log('delay: ' + todo.description, delay);
   // console.log('isFirstCompleted: ' + todo.description, todo.isFirstCompleted);
-  // console.log('newAdded: ' + todo.description, todo.newAdded);
+  console.log('newAdded: ' + todo.description, todo.newAdded);
 
   const [fadeIn, setFadeIn] = useState(!delay);
+  const [isEdit, setEdit] = useState(false);
+  const [todoDesc, setTodoDesc] = useState(todo.description);
   // console.log(`div-todo div-fade-in ${fadeIn ? 'fade-in' : ''}`);
 
   useEffect(() => {
     if (delay > 0) {
       setTimeout(() => setFadeIn(true), delay);
     }
+
+    // use-effect passiert nach dem Rendern
+    todo.newAdded = false;
 
     return () => {
       // todo cleanup
@@ -32,12 +37,22 @@ export default function TodoListElement({
 
   function handleRenameTodo() {
     console.log('handleRenameTodo');
-    // renameTodo(todo.id);
+    setEdit(true);
   }
 
-  function handleSubmitRenameTodo() {
+  function handleChangeTodo(event) {
+    console.log('handleChangeTodo');
+    setTodoDesc(event.target.value);
+  }
+
+  function handleSubmitRenameTodo(event) {
     console.log('handleSubmitRenameTodo');
-    renameTodo(todo.id);
+    event.preventDefault();
+
+    if (todoDesc.trim().length) {
+      renameTodo(todo.id, todoDesc);
+      setEdit(false);
+    }
   }
 
   function handleCheckTodo() {
@@ -57,13 +72,34 @@ export default function TodoListElement({
           checked={todo.isCompleted}
           onChange={handleCheckTodo}
         />
-        <div
-          className={`todo-label ${
-            todo.isCompleted ? 'todo-label-completed' : ''
-          }`}
-        >
-          {todo.description}
-        </div>
+        {!isEdit && (
+          <div
+            className={`todo-label ${
+              todo.isCompleted ? 'todo-label-completed' : ''
+            }`}
+          >
+            {todo.description}
+          </div>
+        )}
+        {isEdit && (
+          <form
+            id="formTodo"
+            action="#"
+            onSubmit={handleSubmitRenameTodo}
+            className="todo-label"
+          >
+            <input
+              id="inputNewList"
+              name={todo.description}
+              placeholder="Beschreibung"
+              value={todoDesc}
+              onChange={handleChangeTodo}
+              required
+              minLength={3}
+              autoFocus
+            ></input>
+          </form>
+        )}
         <button onClick={handleDeleteTodo}>
           <i className="fa fa-trash" aria-hidden="true"></i>
         </button>

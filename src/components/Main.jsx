@@ -74,6 +74,7 @@ export default function Main() {
 
     // 'zahl' in Navlist updaten
     setLists(api.getAllLists());
+    setNewTodo('');
   }
 
   function deleteTodo(todoId) {
@@ -85,8 +86,10 @@ export default function Main() {
     setLists(api.getAllLists());
   }
 
-  function renameTodo(todoId) {
-    console.log('renameTodo', todoId);
+  function renameTodo(todoId, newDescription) {
+    console.log('renameTodo: ', newDescription);
+    api.renameTodo(todoId, newDescription);
+    setTodos(api?.getList(activeList));
   }
 
   function checkTodo(todoId) {
