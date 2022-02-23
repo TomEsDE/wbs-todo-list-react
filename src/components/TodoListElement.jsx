@@ -37,7 +37,7 @@ export default function TodoListElement({
 
   function handleRenameTodo() {
     console.log('handleRenameTodo');
-    setEdit(true);
+    setEdit(!isEdit);
   }
 
   function handleChangeTodo(event) {
@@ -74,6 +74,7 @@ export default function TodoListElement({
         />
         {!isEdit && (
           <div
+            onClick={handleRenameTodo}
             className={`todo-label ${
               todo.isCompleted ? 'todo-label-completed' : ''
             }`}
