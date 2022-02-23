@@ -10,6 +10,7 @@ export default function TodoListElement({
 }) {
   // console.log('delay: ' + todo.description, delay);
   // console.log('isFirstCompleted: ' + todo.description, todo.isFirstCompleted);
+  // console.log('newAdded: ' + todo.description, todo.newAdded);
 
   const [fadeIn, setFadeIn] = useState(!delay);
   // console.log(`div-todo div-fade-in ${fadeIn ? 'fade-in' : ''}`);
@@ -20,7 +21,7 @@ export default function TodoListElement({
     }
 
     return () => {
-      // todo
+      // todo cleanup
     };
   }, []);
 
@@ -47,9 +48,9 @@ export default function TodoListElement({
   return (
     <>
       <div
-        className={`div-todo div-fade-in ${fadeIn ? 'fade-in' : ''} ${
-          todo.isFirstCompleted ? 'todo-completed-first' : ''
-        }`}
+        className={`div-todo div-fade-in ${
+          fadeIn || todo.newAdded ? 'fade-in' : ''
+        } ${todo.isFirstCompleted ? 'todo-completed-first' : ''}`}
       >
         <input
           type="checkbox"

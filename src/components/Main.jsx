@@ -34,11 +34,11 @@ export default function Main() {
     }
   }, [api]);
 
-  // wenn die Listen geladen sind -> die erste Liste auswählen (beim Start)
+  // wenn die Listen geladen sind -> z.B. beim Start oder wenn der 'counter' (anzahl todos) upgedatet wird
   useEffect(() => {
     console.log('useEffect -> auf lists', lists);
     if (api instanceof TodoListApi) {
-      setActiveList(lists[0].listName);
+      setActiveList(activeList.length ? activeList : lists[0].listName);
     }
   }, [lists]);
 
@@ -51,21 +51,38 @@ export default function Main() {
   }, [activeList]);
 
   function handleChangeTodo(event) {
-    console.log('handleChangeTodo', newTodo);
+    // console.log('handleChangeTodo', event.target.value);
     setNewTodo(event.target.value);
   }
 
-  function handleSubmit(event) {
+  function handleSubmitAddTodo(event) {
     event.preventDefault();
-    console.log('handleSubmit', newTodo);
-    api.addTodo(api.createTodo(activeList, newTodo));
-    setTodos(api?.getList(activeList));
+    console.log('handleAddTodo', newTodo);
+
+    if (!newTodo.trim().length) {
+      return;
+    }
+
+    let todoCreated = api.createTodo(activeList, newTodo);
+    api.addTodo(todoCreated); // localStorage
+
+    const list = api?.getList(activeList);
+
+    // das neue kennzeichnen, damit es nicht mit 'fade-in' animiert wird
+    list.find((listTodo) => listTodo.id === todoCreated.id).newAdded = true;
+    setTodos(list);
+
+    // 'zahl' in Navlist updaten
+    setLists(api.getAllLists());
   }
 
   function deleteTodo(todoId) {
     console.log('deleteTodo', todoId);
     api.removeTodo(todoId);
     setTodos(api?.getList(activeList));
+
+    // 'zahl' in Navlist updaten
+    setLists(api.getAllLists());
   }
 
   function renameTodo(todoId) {
@@ -78,21 +95,49 @@ export default function Main() {
     setTodos(api?.getList(activeList));
   }
 
+  function handleRefreshList(event) {
+    console.log('handleRefreshList');
+    setLists(api.getAllLists());
+    setActiveList('');
+  }
+
   function handleAddList(event) {
     console.log('handleAddList');
-    if (!lists[0]?.isNew)
+    if (!lists[0]?.isNew) {
+      setActiveList('');
       setLists([{ listName: 'Neue Liste', count: 0, isNew: true }, ...lists]);
+    }
+  }
+
+  function addList(listName) {
+    api.addList(listName);
+
+    setLists(api.getAllLists());
+    setActiveList(listName);
+  }
+
+  function renameList(oldListName, newListName) {
+    // console.log(`oldListName: ${oldListName} -  newListName: ${newListName}`);
+    api.renameList(oldListName, newListName);
+
+    setLists(api.getAllLists());
+    setActiveList(newListName);
   }
 
   return (
-    <>
+    <main>
       <div className="flexContainerLists">
         <div id="lists">
           <div className="buttonNewList">
-            <div className="labelNewList">Neue Liste</div>
-            <button id="buttonAddList" onClick={handleAddList}>
-              <i className="fa fa-plus"></i>
+            <button id="buttonAddList" onClick={handleRefreshList}>
+              <i className="fa fa-refresh"></i>
             </button>
+            <div style={{ display: 'flex' }}>
+              <div className="labelNewList">Neue Liste</div>
+              <button id="buttonAddList" onClick={handleAddList}>
+                <i className="fa fa-plus"></i>
+              </button>
+            </div>
           </div>
           <div className="ul">
             <ul id="elementAddList">
@@ -103,6 +148,8 @@ export default function Main() {
                     list={list}
                     isActive={activeList === list.listName}
                     setActive={setActiveList}
+                    handleAddList={addList}
+                    handleRenameList={renameList}
                   />
                 );
               })}
@@ -111,7 +158,7 @@ export default function Main() {
         </div>
         <div id="todos">
           <div id="addNewToDo">
-            <form id="formNewTodo" action="#" onSubmit={handleSubmit}>
+            <form id="formNewTodo" action="#" onSubmit={handleSubmitAddTodo}>
               <input
                 id="inputNewTodoText"
                 type="text"
@@ -119,6 +166,8 @@ export default function Main() {
                 value={newTodo}
                 onChange={handleChangeTodo}
                 placeholder="Add a Todo here... "
+                required
+                minLength={3}
                 autoFocus
               />
               <button type="submit">
@@ -145,6 +194,6 @@ export default function Main() {
           </div>
         </div>
       </div>
-    </>
+    </main>
   );
 }

@@ -47,6 +47,42 @@ class Todo {
     return todo;
   }
 
+  /**
+   * in LocalStorage wird JSon gespeichert -> muss beim Auslesen wieder in Todo-Objekte gewandelt werden
+   *
+   * Dates muessen leider auch neu erzeugt werden (dateCreation and dateCompletion)
+   *
+   * @param {} data
+   * @returns
+   */
+  static fromData(data) {
+    // destructure (aka remove unwanted attributes)
+    const {
+      id,
+      listName,
+      description,
+      order,
+      dateCreation,
+      isCompleted,
+      dateCompletion,
+      isImportant,
+    } = data;
+    // new Instance
+    const todo = new Todo(
+      id,
+      listName,
+      description,
+      order,
+      dateCreation,
+      isCompleted,
+      dateCompletion,
+      isImportant
+    );
+    // console.table(todo);
+    // return
+    return todo;
+  }
+
   completed() {
     this.isCompleted = true;
     this.dateCompletion = new Date();
@@ -123,7 +159,10 @@ class TodoListApi {
    * @param {*} todoList
    */
   saveToLocalStorage(todoList) {
-    window.localStorage.setItem(this.localStorageKey, JSON.stringify(todoList));
+    // pseudo-Attribute wieder entfernen (an attempt)
+    const todos = todoList.map((todo) => Todo.fromData(todo));
+    // console.table(todos);
+    window.localStorage.setItem(this.localStorageKey, JSON.stringify(todos));
     // console.table(todoList);
   }
 
@@ -158,6 +197,7 @@ class TodoListApi {
   addTodo(todo) {
     // -todo der Liste hinzufuegen
     this.globalTodoList.push(todo);
+    // console.table(this.globalTodoList);
 
     // im Storage speichern
     this.saveToLocalStorage(this.globalTodoList);
@@ -361,6 +401,22 @@ class TodoListApi {
     console.log(pseudoTodo); // Typ von Class Todo (mit allen Attributen)
 
     return pseudoTodo;
+  }
+  /**
+   * Liste umbenennen -> alle Todos der Liste mit neuen 'listName' updaten
+   * @param {*} oldListName
+   * @param {*} newListName
+   */
+  renameList(oldListName, newListName) {
+    console.log(`oldListName: ${oldListName} -  newListName: ${newListName}`);
+    const newTodolist = this.globalTodoList
+      .filter((todo) => todo.listName === oldListName)
+      .map((todo) => {
+        todo.listName = newListName;
+        return todo;
+      });
+
+    this.saveToLocalStorage(newTodolist);
   }
 
   /**

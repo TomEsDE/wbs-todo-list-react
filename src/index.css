@@ -15,7 +15,8 @@ html {
 }
 
 /* Styling Lydia Start */
-.flex-wrapper {
+.flex-wrapper,
+main {
   min-height: 30rem;
 }
 
@@ -85,7 +86,7 @@ footer {
 
 .buttonNewList {
   display: flex;
-  justify-content: right;
+  justify-content: space-between;
 }
 
 .labelNewList {
@@ -202,7 +203,7 @@ ul li:nth-child(odd):hover {
 
 .listToDo {
   display: flex;
-  flex-direction: column;
+  /* flex-direction: column; */
   align-items: center;
   justify-content: space-between;
   padding-top: 0;
