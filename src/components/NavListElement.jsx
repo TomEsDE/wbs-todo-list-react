@@ -34,7 +34,7 @@ export default function NavListElement({
   function handleButtonRenameList(event) {
     console.log('handleRenameList', list.listName);
     setNewListName(list.listName);
-    setRename(true);
+    setRename(!isRename);
     // setNewListName(event.target.value);
   }
   return (
@@ -69,10 +69,12 @@ export default function NavListElement({
             </span>
           )}
         </button>
-        <button onClick={handleButtonRenameList}>
-          {/* <i className="fa fa-edit" aria-hidden="true"></i> */}
-          <FaEdit />
-        </button>
+        {!list.isNew && (
+          <button onClick={handleButtonRenameList}>
+            {/* <i className="fa fa-edit" aria-hidden="true"></i> */}
+            <FaEdit />
+          </button>
+        )}
       </li>
     </>
   );
