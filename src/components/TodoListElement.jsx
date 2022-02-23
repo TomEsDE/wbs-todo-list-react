@@ -10,7 +10,7 @@ export default function TodoListElement({
 }) {
   // console.log('delay: ' + todo.description, delay);
   // console.log('isFirstCompleted: ' + todo.description, todo.isFirstCompleted);
-  console.log('newAdded: ' + todo.description, todo.newAdded);
+  // console.log('newAdded: ' + todo.description, todo.newAdded);
 
   const [fadeIn, setFadeIn] = useState(!delay);
   const [isEdit, setEdit] = useState(false);
