@@ -32,7 +32,7 @@ export default function TodoListElement({
 
   function handleDeleteTodo() {
     console.log('handleDeleteTodo');
-    deleteTodo(todo.id);
+    deleteTodo(todo.id, todo.listName);
   }
 
   function handleRenameTodo() {

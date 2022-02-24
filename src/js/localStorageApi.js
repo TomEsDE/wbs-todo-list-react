@@ -389,7 +389,7 @@ class TodoListApi {
     // falls Liste schon vorhanden 'null' returnen (kann auf falsy geprueft werden)
     if (this.getList(listName).length > 0) {
       console.error('Liste schon vorhanden!');
-      alert('Liste schon vorhanden!');
+      // alert('Liste schon vorhanden!');
       return false;
     }
 

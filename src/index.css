@@ -257,3 +257,25 @@ input[type='checkbox'] {
 .fade-in {
   opacity: 1;
 }
+
+.dialog {
+  position: absolute;
+  box-sizing: border-box;
+  border: 3px solid black;
+  border-radius: 10px;
+  padding: 1rem;
+  box-shadow: 5px 5px 20px black;
+}
+
+.modal-header {
+  color: lightgoldenrodyellow;
+  text-shadow: 2px 2px 5px black;
+  /* font-size: 1.5rem;
+  font-weight: bold;
+  padding-bottom: 10px; */
+}
+
+.dialog-buttons {
+  display: flex;
+  justify-content: space-between;
+}

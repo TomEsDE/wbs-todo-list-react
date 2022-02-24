@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Todo, TodoListApi } from '../js/localStorageApi';
+import Modal from 'react-modal';
 
 import NavListElement from './NavListElement';
 import TodoListElement from './TodoListElement';
@@ -19,6 +20,14 @@ export default function Main({ api }) {
   const [todos, setTodos] = useState([]);
   const [activeList, setActiveList] = useState('');
   const [newTodo, setNewTodo] = useState('');
+
+  // modal
+  const [listDelete, setListDelete] = useState({ todoId: -1, listName: '' });
+  const [modalIsOpen, setIsOpen] = useState(false);
+  const [dialogTypeConfirm, setDialogTypeConfirm] = useState(false);
+  const [dialogConfirmAction, setDialogConfirmAction] = useState();
+  const [dialogMsg, setDialogMsg] = useState('Ein Fehler ist aufgetreten');
+  const [dialogHeader, setDialogHeader] = useState('Fehler');
 
   // einmalig ausführen (ohne dependency) -> Api instanziieren
   // useEffect(() => {
@@ -77,8 +86,27 @@ export default function Main({ api }) {
     setNewTodo('');
   }
 
-  function deleteTodo(todoId) {
-    console.log('deleteTodo', todoId);
+  function confirmDeleteList() {
+    console.log('-------- confirmDeleteList');
+    console.table(listDelete);
+    closeModal();
+    deleteTodo(listDelete.todoId, listDelete.listName, true);
+  }
+
+  function deleteTodo(todoId, listName, confirmed = false) {
+    console.log('deleteTodo: ', todoId);
+    console.log('confirmed: ', confirmed);
+
+    if (api?.getList(listName).length === 1 && !confirmed) {
+      setListDelete({ todoId: todoId, listName: listName });
+      console.table(listDelete);
+
+      setDialogConfirmAction(() => confirmDeleteList);
+
+      setDialogTypeConfirm(true);
+      openModal(`Wollen Sie die Liste wirklich löschen?`, 'Bestätigung');
+      return;
+    }
     api.removeTodo(todoId);
     setTodos(api?.getList(activeList));
 
@@ -113,10 +141,16 @@ export default function Main({ api }) {
   }
 
   function addList(listName) {
-    api.addList(listName);
-
-    setLists(api.getAllLists());
-    setActiveList(listName);
+    if (api.addList(listName)) {
+      setLists(api.getAllLists());
+      setActiveList(listName);
+    } else {
+      setDialogTypeConfirm(false);
+      openModal(
+        `Ein Liste mit dem Namen '${listName}' existiert bereits.`,
+        'Eingabefehler'
+      );
+    }
   }
 
   function renameList(oldListName, newListName) {
@@ -126,6 +160,34 @@ export default function Main({ api }) {
     setLists(api.getAllLists());
     setActiveList(newListName);
   }
+
+  // modal functions
+  function openModal(dialogMsg, dialogHeader = 'Fehler') {
+    setDialogHeader(dialogHeader);
+    setDialogMsg(dialogMsg);
+    setIsOpen(true);
+  }
+
+  function afterOpenModal() {
+    // references are now sync'd and can be accessed.
+    // subtitle.style.color = '#f00';
+  }
+
+  function closeModal() {
+    setIsOpen(false);
+  }
+
+  const customStyles = {
+    content: {
+      top: '50%',
+      left: '50%',
+      right: 'auto',
+      bottom: 'auto',
+      marginRight: '-50%',
+      transform: 'translate(-50%, -50%)',
+      background: '#1f8dd6',
+    },
+  };
 
   return (
     <main>
@@ -197,6 +259,28 @@ export default function Main({ api }) {
           </div>
         </div>
       </div>
+      {/* Modaler Dialog  */}
+      {/* <button onClick={() => openModal('test')}>Open Modal</button> */}
+      <Modal
+        isOpen={modalIsOpen}
+        onAfterOpen={afterOpenModal}
+        onRequestClose={closeModal}
+        style={customStyles}
+        contentLabel="Example Modal"
+        ariaHideApp={false}
+        className="dialog"
+      >
+        <h2 className="modal-header">{dialogHeader}</h2>
+        <div>{dialogMsg}</div>
+        <br />
+        {!dialogTypeConfirm && <button onClick={closeModal}>Schließen</button>}
+        {dialogTypeConfirm && (
+          <div className="dialog-buttons">
+            <button onClick={closeModal}>Nein</button>
+            <button onClick={dialogConfirmAction}>Ja</button>
+          </div>
+        )}
+      </Modal>
     </main>
   );
 }
