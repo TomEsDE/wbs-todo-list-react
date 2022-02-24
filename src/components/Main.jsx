@@ -26,6 +26,7 @@ export default function Main({ api }) {
   const [modalIsOpen, setIsOpen] = useState(false);
   const [dialogTypeConfirm, setDialogTypeConfirm] = useState(false);
   const [dialogConfirmAction, setDialogConfirmAction] = useState();
+  const [dialogConfirm, setDialogConfirm] = useState(false);
   const [dialogMsg, setDialogMsg] = useState('Ein Fehler ist aufgetreten');
   const [dialogHeader, setDialogHeader] = useState('Fehler');
 
@@ -59,6 +60,15 @@ export default function Main({ api }) {
     }
   }, [activeList]);
 
+  // wenn die aktive Liste gesetzt wird -> Todos der Liste laden!
+  useEffect(() => {
+    console.log('useEffect -> auf dialogConfirm', listDelete);
+    console.log(' -> dialogConfirm', dialogConfirm);
+    if (dialogConfirm) {
+      confirmDeleteList();
+    }
+  }, [dialogConfirm]);
+
   function handleChangeTodo(event) {
     // console.log('handleChangeTodo', event.target.value);
     setNewTodo(event.target.value);
@@ -86,7 +96,7 @@ export default function Main({ api }) {
     setNewTodo('');
   }
 
-  function confirmDeleteList() {
+  function confirmDeleteList(todoId, listName) {
     console.log('-------- confirmDeleteList');
     console.table(listDelete);
     closeModal();
@@ -98,7 +108,8 @@ export default function Main({ api }) {
     console.log('confirmed: ', confirmed);
 
     if (api?.getList(listName).length === 1 && !confirmed) {
-      setListDelete({ todoId: todoId, listName: listName });
+      setDialogConfirm(false);
+      setListDelete(() => ({ todoId: todoId, listName: listName }));
       console.table(listDelete);
 
       setDialogConfirmAction(() => confirmDeleteList);
@@ -277,7 +288,14 @@ export default function Main({ api }) {
         {dialogTypeConfirm && (
           <div className="dialog-buttons">
             <button onClick={closeModal}>Nein</button>
-            <button onClick={dialogConfirmAction}>Ja</button>
+            <button
+              onClick={() => {
+                setDialogConfirm(true);
+                closeModal();
+              }}
+            >
+              Ja
+            </button>
           </div>
         )}
       </Modal>
