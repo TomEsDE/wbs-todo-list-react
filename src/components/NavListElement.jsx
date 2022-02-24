@@ -62,9 +62,9 @@ export default function NavListElement({
             <span>{list.listName}</span>
           )}
           {!list.isNew && !isRename && (
-            <span style={{ fontSize: '7pt', marginLeft: '5px' }}>
+            <span style={{ fontSize: '8pt', marginLeft: '5px' }}>
               <sub>
-                <em>{list.count}</em>
+                <em>({list.count})</em>
               </sub>
             </span>
           )}

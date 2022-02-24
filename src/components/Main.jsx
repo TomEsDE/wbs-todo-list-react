@@ -10,21 +10,21 @@ import TodoListElement from './TodoListElement';
 //   brands,
 // } from '@fortawesome/fontawesome-svg-core/import.macro'; // <-- import st
 
-export default function Main() {
+export default function Main({ api }) {
   // const _api = new TodoListApi();
   // console.log(_api.addTodo(_api.createTodo('Einkauf', 'Eier')));
 
-  const [api, setApi] = useState();
+  // const [api, setApi] = useState();
   const [lists, setLists] = useState([]);
   const [todos, setTodos] = useState([]);
   const [activeList, setActiveList] = useState('');
   const [newTodo, setNewTodo] = useState('');
 
   // einmalig ausführen (ohne dependency) -> Api instanziieren
-  useEffect(() => {
-    console.log('useEffect -> ONCE');
-    setApi(new TodoListApi());
-  }, []);
+  // useEffect(() => {
+  //   console.log('useEffect -> ONCE');
+  //   setApi(new TodoListApi());
+  // }, []);
 
   // auf api hören -> alle Listen laden (beim Start)
   useEffect(() => {
@@ -32,13 +32,13 @@ export default function Main() {
     if (api instanceof TodoListApi) {
       setLists(api.getAllLists());
     }
-  }, [api]);
+  }, []);
 
   // wenn die Listen geladen sind -> z.B. beim Start oder wenn der 'counter' (anzahl todos) upgedatet wird
   useEffect(() => {
     console.log('useEffect -> auf lists', lists);
     if (api instanceof TodoListApi) {
-      setActiveList(activeList.length ? activeList : lists[0].listName);
+      setActiveList(activeList?.length ? activeList : lists[0]?.listName);
     }
   }, [lists]);
 
