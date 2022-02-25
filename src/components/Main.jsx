@@ -30,12 +30,6 @@ export default function Main({ api }) {
   const [dialogMsg, setDialogMsg] = useState('Ein Fehler ist aufgetreten');
   const [dialogHeader, setDialogHeader] = useState('Fehler');
 
-  // einmalig ausführen (ohne dependency) -> Api instanziieren
-  // useEffect(() => {
-  //   console.log('useEffect -> ONCE');
-  //   setApi(new TodoListApi());
-  // }, []);
-
   // auf api hören -> alle Listen laden (beim Start)
   useEffect(() => {
     console.log('useEffect -> auf api', api);
