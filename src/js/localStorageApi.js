@@ -163,6 +163,8 @@ class TodoListApi {
     const todos = todoList.map((todo) => Todo.fromData(todo));
     // console.table(todos);
     window.localStorage.setItem(this.localStorageKey, JSON.stringify(todos));
+
+    this.globalTodoList = todos;
     // console.table(todoList);
   }
 
@@ -409,12 +411,10 @@ class TodoListApi {
    */
   renameList(oldListName, newListName) {
     console.log(`oldListName: ${oldListName} -  newListName: ${newListName}`);
-    const newTodolist = this.globalTodoList
-      .filter((todo) => todo.listName === oldListName)
-      .map((todo) => {
-        todo.listName = newListName;
-        return todo;
-      });
+    const newTodolist = this.globalTodoList.map((todo) => {
+      if (todo.listName === oldListName) todo.listName = newListName;
+      return todo;
+    });
 
     this.saveToLocalStorage(newTodolist);
   }
@@ -433,7 +433,9 @@ class TodoListApi {
   getAllLists() {
     console.log('getAllLists');
     // nur die Listen-(Namen) auflisten
-    const listNames = this.globalTodoList.map((todo) => todo.listName);
+    const listNames = this.getTodoListFromStorage().map(
+      (todo) => todo.listName
+    );
     // Duplicate entfernen
     let uniqueListNames = [...new Set(listNames)];
 
@@ -464,7 +466,7 @@ class TodoListApi {
     console.log(`listName: ${listName}`);
 
     const getTodosOfList = (isCompleted) =>
-      this.globalTodoList
+      this.getTodoListFromStorage()
         .filter((todo) => {
           todo.isFirstCompleted = false; // pseudo-value
           return todo.listName === listName && todo.isCompleted === isCompleted;

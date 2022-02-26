@@ -53,7 +53,7 @@ export default function TodoListElement({
 
     if (todoDesc.trim().length) {
       renameTodo(todo.id, todoDesc);
-      setEdit(false);
+      // setEdit(false);
     }
   }
 

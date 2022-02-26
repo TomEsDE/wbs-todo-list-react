@@ -50,11 +50,13 @@ export default function Main({ api }) {
   useEffect(() => {
     console.log('useEffect -> auf activeList', activeList);
     if (api instanceof TodoListApi) {
-      setTodos(api?.getList(activeList));
+      const activeListApi = api?.getList(activeList);
+      console.table(activeListApi);
+      setTodos([...activeListApi]);
     }
   }, [activeList]);
 
-  // wenn die aktive Liste gesetzt wird -> Todos der Liste laden!
+  // wenn dialog confirmed wird
   useEffect(() => {
     console.log('useEffect -> auf dialogConfirm', listDelete);
     console.log(' -> dialogConfirm', dialogConfirm);
