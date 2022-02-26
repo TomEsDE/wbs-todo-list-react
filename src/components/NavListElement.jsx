@@ -7,10 +7,11 @@ export default function NavListElement({
   setActive,
   handleAddList,
   handleRenameList,
+  setEdit,
 }) {
   // console.log('setActive', setActive);
   const [newListName, setNewListName] = useState('');
-  const [isRename, setRename] = useState(false);
+  // const [isRename, setRename] = useState(false);
 
   function handleSetActive() {
     setActive(list.listName);
@@ -21,9 +22,10 @@ export default function NavListElement({
 
     if (newListName.trim().length) {
       if (list.isNew) handleAddList(newListName);
-      else if (isRename) handleRenameList(list.listName, newListName);
+      else if (list.isEdit) handleRenameList(list.listName, newListName);
     }
-    setRename(false);
+    // setRename(false);
+    // list.isEdit = false;
   }
 
   function handleChangeList(event) {
@@ -34,7 +36,8 @@ export default function NavListElement({
   function handleButtonRenameList(event) {
     console.log('handleRenameList', list.listName);
     setNewListName(list.listName);
-    setRename(!isRename);
+    // setRename(!isRename);
+    setEdit(list.listName);
     // setNewListName(event.target.value);
   }
   return (
@@ -45,7 +48,7 @@ export default function NavListElement({
           id="btn_haushalt"
           onClick={handleSetActive}
         >
-          {list.isNew || isRename ? (
+          {list.isNew || list.isEdit ? (
             <form id="formNewTodo" action="#" onSubmit={handleSubmitAddList}>
               <input
                 id="inputNewList"
@@ -61,7 +64,7 @@ export default function NavListElement({
           ) : (
             <span>{list.listName}</span>
           )}
-          {!list.isNew && !isRename && (
+          {!list.isNew && !list.isEdit && (
             <span style={{ fontSize: '8pt', marginLeft: '5px' }}>
               <sub>
                 <em>({list.count})</em>

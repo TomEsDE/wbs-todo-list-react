@@ -7,13 +7,14 @@ export default function TodoListElement({
   deleteTodo,
   renameTodo,
   checkTodo,
+  setEdit,
 }) {
   // console.log('delay: ' + todo.description, delay);
   // console.log('isFirstCompleted: ' + todo.description, todo.isFirstCompleted);
   // console.log('newAdded: ' + todo.description, todo.newAdded);
 
   const [fadeIn, setFadeIn] = useState(!delay);
-  const [isEdit, setEdit] = useState(false);
+  // const [isEdit, setEdit] = useState(false);
   const [todoDesc, setTodoDesc] = useState(todo.description);
   // console.log(`div-todo div-fade-in ${fadeIn ? 'fade-in' : ''}`);
 
@@ -37,7 +38,8 @@ export default function TodoListElement({
 
   function handleRenameTodo() {
     console.log('handleRenameTodo');
-    setEdit(!isEdit);
+    // setEdit(!isEdit);
+    setEdit(todo.id);
   }
 
   function handleChangeTodo(event) {
@@ -72,7 +74,7 @@ export default function TodoListElement({
           checked={todo.isCompleted}
           onChange={handleCheckTodo}
         />
-        {!isEdit && (
+        {!todo.isEdit && (
           <div
             onClick={handleRenameTodo}
             className={`todo-label ${
@@ -82,7 +84,7 @@ export default function TodoListElement({
             {todo.description}
           </div>
         )}
-        {isEdit && (
+        {todo.isEdit && (
           <form
             id="formTodo"
             action="#"

@@ -119,6 +119,18 @@ export default function Main({ api }) {
     setLists(api.getAllLists());
   }
 
+  function setEditTodo(todoId) {
+    console.log('setEditTodo: ', todoId);
+    setTodos(
+      todos.map((todo) => {
+        if (todo.isEdit) todo.isEdit = false;
+        else todo.isEdit = todo.id === todoId;
+        return todo;
+      })
+    );
+    if (todoId) setEditList();
+  }
+
   function renameTodo(todoId, newDescription) {
     console.log('renameTodo: ', newDescription);
     api.renameTodo(todoId, newDescription);
@@ -156,6 +168,18 @@ export default function Main({ api }) {
         'Eingabefehler'
       );
     }
+  }
+
+  function setEditList(listName) {
+    console.log('setEditList: ', listName);
+    setLists(
+      lists.map((list) => {
+        if (list.isEdit) list.isEdit = false;
+        else list.isEdit = list.listName === listName;
+        return list;
+      })
+    );
+    if (listName) setEditTodo();
   }
 
   function renameList(oldListName, newListName) {
@@ -220,6 +244,7 @@ export default function Main({ api }) {
                     setActive={setActiveList}
                     handleAddList={addList}
                     handleRenameList={renameList}
+                    setEdit={setEditList}
                   />
                 );
               })}
@@ -256,6 +281,7 @@ export default function Main({ api }) {
                     deleteTodo={deleteTodo}
                     renameTodo={renameTodo}
                     checkTodo={checkTodo}
+                    setEdit={setEditTodo}
                   />
                 );
               })}
