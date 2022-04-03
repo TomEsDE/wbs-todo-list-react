@@ -290,6 +290,28 @@ class TodoListApi {
   }
 
   /**
+   * .Todo verschieben (per DnD :D)
+   *
+   * @param {*} id des Todo's
+   */
+  moveTodo(id, listName) {
+    const todo = this.getTodo(id);
+
+    if (!todo) {
+      // error -> nicht gefunden
+      console.error('Todo nicht gefunden!');
+      return false;
+    }
+
+    if (todo.listName === listName) return;
+
+    todo.listName = listName;
+
+    // in localStorage speichern
+    this.saveToLocalStorage(this.globalTodoList);
+  }
+
+  /**
    * ein Todo 'erledigen'
    *
    * @param {*} id des Todo's

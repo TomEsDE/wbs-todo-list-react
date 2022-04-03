@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FaEdit } from 'react-icons/fa';
+import { useDrop } from 'react-dnd';
 
 export default function NavListElement({
   list,
@@ -8,7 +9,19 @@ export default function NavListElement({
   handleAddList,
   handleRenameList,
   setEdit,
+  moveTodo,
 }) {
+  const [{ isOver, canDrop, item }, drop] = useDrop(() => ({
+    accept: 'Todo',
+    // canDrop: () => game.canMoveKnight(x, y),
+    drop: (item) => {
+      return moveTodo(item.id, list.listName);
+    },
+    collect: (monitor) => ({
+      isOver: !!monitor.isOver(),
+      canDrop: !!monitor.canDrop(),
+    }),
+  }));
   // console.log('setActive', setActive);
   const [newListName, setNewListName] = useState('');
   // const [isRename, setRename] = useState(false);
@@ -42,9 +55,12 @@ export default function NavListElement({
   }
   return (
     <>
-      <li className="listToDo">
+      <li className={`listToDo`}>
         <button
-          className={`list-button ${isActive ? 'list-button-active' : ''}`}
+          ref={drop}
+          className={`list-button ${isActive ? 'list-button-active' : ''} ${
+            canDrop && 'can-drop'
+          } ${isOver && 'is-over'}`}
           id="btn_haushalt"
           onClick={handleSetActive}
         >

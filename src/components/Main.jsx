@@ -145,6 +145,12 @@ export default function Main({ api }) {
     setTodos(api?.getList(activeList));
   }
 
+  function moveTodo(todoId, listName) {
+    console.log('moveTodo', todoId);
+    api.moveTodo(todoId, listName);
+    setActiveList(listName);
+  }
+
   function handleRefreshList(event) {
     console.log('handleRefreshList');
     setLists(api.getAllLists());
@@ -247,6 +253,7 @@ export default function Main({ api }) {
                     handleAddList={addList}
                     handleRenameList={renameList}
                     setEdit={setEditList}
+                    moveTodo={moveTodo}
                   />
                 );
               })}

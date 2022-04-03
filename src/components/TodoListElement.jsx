@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Todo } from '../js/localStorageApi';
+import { useDrag } from 'react-dnd';
 
 export default function TodoListElement({
   todo,
@@ -9,6 +10,13 @@ export default function TodoListElement({
   checkTodo,
   setEdit,
 }) {
+  const [collected, drag, dragPreview] = useDrag(() => ({
+    type: 'Todo',
+    item: { id: todo.id },
+    collect: (monitor) => ({
+      isDragging: !!monitor.isDragging(),
+    }),
+  }));
   // console.log('delay: ' + todo.description, delay);
   // console.log('isFirstCompleted: ' + todo.description, todo.isFirstCompleted);
   // console.log('newAdded: ' + todo.description, todo.newAdded);
@@ -67,7 +75,8 @@ export default function TodoListElement({
       <div
         className={`div-todo div-fade-in ${
           fadeIn || todo.newAdded ? 'fade-in' : ''
-        } ${todo.isFirstCompleted ? 'todo-completed-first' : ''}`}
+        } ${todo.isFirstCompleted ? 'todo-completed-first' : ''}
+        ${collected.isDragging ? 'opacity-drag' : ''}`}
       >
         <input
           type="checkbox"
@@ -76,6 +85,7 @@ export default function TodoListElement({
         />
         {!todo.isEdit && (
           <div
+            ref={drag}
             onClick={handleRenameTodo}
             className={`todo-label ${
               todo.isCompleted ? 'todo-label-completed' : ''

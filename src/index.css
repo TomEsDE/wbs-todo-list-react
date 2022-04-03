@@ -279,3 +279,18 @@ input[type='checkbox'] {
   display: flex;
   justify-content: space-between;
 }
+
+.opacity-drag {
+  /* opacity: 0.1; */
+  display: none;
+}
+
+.can-drop {
+  /* opacity: 0.1; */
+  border: 2px solid purple;
+}
+
+.is-over {
+  /* opacity: 0.1; */
+  background: yellow;
+}
